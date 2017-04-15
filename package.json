@@ -1,6 +1,6 @@
 {
   "name": "parse-large-json",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Parse large JSON strings without blockage by parsing chunks asynchronously",
   "main": "index.js",
   "scripts": {
