@@ -1,0 +1,32 @@
+{
+  "name": "parse-large-json",
+  "version": "1.0.0",
+  "description": "Parse large JSON strings without blockage by parsing chunks asynchronously",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test",
+    "test-browser": "budo test --live"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vigour-io/parse-large-json.git"
+  },
+  "keywords": [
+    "JSON",
+    "parse",
+    "async",
+    "asynchronous",
+    "actually",
+    "asynchronous"
+  ],
+  "author": "Marcus Besjes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vigour-io/parse-large-json/issues"
+  },
+  "homepage": "https://github.com/vigour-io/parse-large-json#readme",
+  "devDependencies": {
+    "budo": "^9.4.7",
+    "tape": "^4.6.3"
+  }
+}
