@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/vigour-io/parse-large-json#readme",
   "dependencies": {
-    "bubleify": "0.5.1",
+    "bubleify": "0.5.1"
   },
   "devDependencies": {
     "budo": "^9.4.7",
@@ -34,7 +34,7 @@
   },
   "browserify": {
     "transform": [
-      "bubleify",
+      "bubleify"
     ]
   }
 }
