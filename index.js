@@ -1,15 +1,17 @@
 'use strict'
 
+const wait = (time, passon) => new Promise(resolve => setTimeout(() => resolve(passon), time))
+
 module.exports = parseAsync
 
-function parseAsync (string, maxSize) {
-  const result = getValue(string, maxSize)
+function parseAsync (string, maxSize, timeout) {
+  const result = getValue(string, maxSize, timeout)
   return typeof result.then === 'function'
     ? result
     : Promise.resolve(result)
 }
 
-function getValue (string, maxSize) {
+function getValue (string, maxSize, timeout) {
   const { val, rest } = typeCheck(string)
   if (!val || typeof val !== 'object') {
     return { val, rest }
@@ -18,9 +20,9 @@ function getValue (string, maxSize) {
     const chunk = grabChunk(rest, isArray, maxSize)
     return chunk || new Promise((resolve, reject) => {
       if (isArray) {
-        resolve(parseArray(val, rest))
+        resolve(parseArray(val, rest, timeout))
       } else {
-        resolve(parseObject(val, rest))
+        resolve(parseObject(val, rest, timeout))
       }
     })
   }
@@ -81,12 +83,15 @@ const charToType = {
   '"': (string) => extractString(string)
 }
 
-function parseObject (obj, string) {
+function parseObject (obj, string, timeout) {
   const {key, rest} = getKey(string)
   if (key) {
     const value = getValue(rest)
     if (value.then) {
-      return value.then(handle)
+      const queuedHandle = value.then(handle)
+      return timeout
+        ? queuedHandle.then(result => wait(timeout, result))
+        : queuedHandle
     } else {
       return handle(value)
     }
@@ -119,10 +124,13 @@ function getKey (string) {
   }
 }
 
-function parseArray (arr, string) {
+function parseArray (arr, string, timeout) {
   const value = getValue(string.substring(1))
   if (value.then) {
-    return value.then(handle)
+    const queuedHandle = value.then(handle)
+    return timeout
+      ? queuedHandle.then(result => wait(timeout, result))
+      : queuedHandle
   } else {
     return handle(value)
   }
