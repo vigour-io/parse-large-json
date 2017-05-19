@@ -20,9 +20,9 @@ function getValue (string, maxSize, timeout) {
     const chunk = grabChunk(rest, isArray, maxSize)
     return chunk || new Promise((resolve, reject) => {
       if (isArray) {
-        resolve(parseArray(val, rest, timeout))
+        resolve(parseArray(val, rest, maxSize, timeout))
       } else {
-        resolve(parseObject(val, rest, timeout))
+        resolve(parseObject(val, rest, maxSize, timeout))
       }
     })
   }
@@ -83,10 +83,10 @@ const charToType = {
   '"': (string) => extractString(string)
 }
 
-function parseObject (obj, string, timeout) {
+function parseObject (obj, string, maxSize, timeout) {
   const {key, rest} = getKey(string)
   if (key) {
-    const value = getValue(rest)
+    const value = getValue(rest, maxSize, timeout)
     if (value.then) {
       const queuedHandle = value.then(handle)
       return timeout
@@ -102,7 +102,7 @@ function parseObject (obj, string, timeout) {
   function handle ({val, rest}) {
     obj[key] = val
     if (rest[0] === ',') {
-      return parseObject(obj, rest)
+      return parseObject(obj, rest, maxSize, timeout)
     } else {
       return {val: obj, rest: rest.substr(1)}
     }
@@ -124,8 +124,8 @@ function getKey (string) {
   }
 }
 
-function parseArray (arr, string, timeout) {
-  const value = getValue(string.substr(1))
+function parseArray (arr, string, maxSize, timeout) {
+  const value = getValue(string.substr(1), maxSize, timeout)
   if (value.then) {
     const queuedHandle = value.then(handle)
     return timeout
@@ -137,7 +137,7 @@ function parseArray (arr, string, timeout) {
   function handle ({val, rest}) {
     arr.push(val)
     if (rest[0] === ',') {
-      return parseArray(arr, rest)
+      return parseArray(arr, rest, maxSize, timeout)
     } else {
       return {val: arr, rest: rest.substr(1)}
     }
