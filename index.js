@@ -56,8 +56,8 @@ function grabChunk (string, isArray, maxSize) {
       if (depth === 0) {
         const cutAt = i + 1
         return {
-          val: JSON.parse(string.substring(0, cutAt)),
-          rest: string.substring(cutAt)
+          val: JSON.parse(string.substr(0, cutAt)),
+          rest: string.substr(cutAt)
         }
       }
     }
@@ -77,9 +77,9 @@ function typeCheck (string) {
 const charToType = {
   '{': (string) => ({val: {}, rest: string}),
   '[': (string) => ({val: [], rest: string}),
-  't': (string) => ({val: true, rest: string.substring(4)}),
-  'f': (string) => ({val: false, rest: string.substring(5)}),
-  'n': (string) => ({val: null, rest: string.substring(4)}),
+  't': (string) => ({val: true, rest: string.substr(4)}),
+  'f': (string) => ({val: false, rest: string.substr(5)}),
+  'n': (string) => ({val: null, rest: string.substr(4)}),
   '"': (string) => extractString(string)
 }
 
@@ -104,7 +104,7 @@ function parseObject (obj, string, timeout) {
     if (rest[0] === ',') {
       return parseObject(obj, rest)
     } else {
-      return {val: obj, rest: rest.substring(1)}
+      return {val: obj, rest: rest.substr(1)}
     }
   }
 }
@@ -112,12 +112,12 @@ function parseObject (obj, string, timeout) {
 const keyFinder = /"(.*?)":/
 function getKey (string) {
   if (string[1] === '}') {
-    return {key: null, rest: string.substring(2)}
+    return {key: null, rest: string.substr(2)}
   } else {
     const matched = string.match(keyFinder)
     if (matched) {
       const key = matched[1]
-      return {key, rest: string.substring(2 + key.length + 2)}
+      return {key, rest: string.substr(2 + key.length + 2)}
     } else {
       throw Error('unable to find key..')
     }
@@ -125,7 +125,7 @@ function getKey (string) {
 }
 
 function parseArray (arr, string, timeout) {
-  const value = getValue(string.substring(1))
+  const value = getValue(string.substr(1))
   if (value.then) {
     const queuedHandle = value.then(handle)
     return timeout
@@ -139,7 +139,7 @@ function parseArray (arr, string, timeout) {
     if (rest[0] === ',') {
       return parseArray(arr, rest)
     } else {
-      return {val: arr, rest: rest.substring(1)}
+      return {val: arr, rest: rest.substr(1)}
     }
   }
 }
@@ -151,7 +151,7 @@ function extractString (string) {
     const raw = matched[1]
     return {
       val: JSON.parse(raw),
-      rest: string.substring(raw.length)
+      rest: string.substr(raw.length)
     }
   } else {
     throw Error('unable to extractString..')
@@ -165,7 +165,7 @@ function extractNumber (string) {
     const raw = matched[1]
     return {
       val: Number(raw),
-      rest: string.substring(raw.length)
+      rest: string.substr(raw.length)
     }
   } else {
     throw Error('unable to extractNumber..')
